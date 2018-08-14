@@ -6,7 +6,7 @@
  *              topics, etc.
  *  \author     Mike Purvis <mpurvis@clearpathrobotics.com> (original code for UM6)
  *  \copyright  Copyright (c) 2013, Clearpath Robotics, Inc.
- *  \author     Alex Brown <rbirac@cox.net>		    (adapted to UM7)
+ *  \author     Alex Brown <rbirac@cox.net>       (adapted to UM7)
  *  \copyright  Copyright (c) 2015, Alex Brown.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -218,10 +218,10 @@ void publishMsgs(um7::Registers& r, ros::NodeHandle* imu_nh, sensor_msgs::Imu& i
     if (tf_ned_to_enu)
     {
       // world frame
-      imu_msg.orientation.w =  r.quat.get_scaled(2);
-      imu_msg.orientation.x =  r.quat.get_scaled(1);
-      imu_msg.orientation.y = -r.quat.get_scaled(3);
-      imu_msg.orientation.z =  r.quat.get_scaled(0);
+      imu_msg.orientation.w =  r.quat.get_scaled(0); //w_old
+      imu_msg.orientation.x =  r.quat.get_scaled(1); //x_old
+      imu_msg.orientation.y =  -r.quat.get_scaled(2); //-y_old
+      imu_msg.orientation.z =  -r.quat.get_scaled(3); //-z_old
 
       // body-fixed frame
       imu_msg.angular_velocity.x =  r.gyro.get_scaled(0);
@@ -236,9 +236,9 @@ void publishMsgs(um7::Registers& r, ros::NodeHandle* imu_nh, sensor_msgs::Imu& i
     else
     {
       imu_msg.orientation.w = r.quat.get_scaled(0);
-      imu_msg.orientation.x = r.quat.get_scaled(1);
-      imu_msg.orientation.y = r.quat.get_scaled(2);
-      imu_msg.orientation.z = r.quat.get_scaled(3);
+      imu_msg.orientation.x = r.quat.get_scaled(2);
+      imu_msg.orientation.y = r.quat.get_scaled(1);
+      imu_msg.orientation.z = -r.quat.get_scaled(3);
 
       imu_msg.angular_velocity.x = r.gyro.get_scaled(0);
       imu_msg.angular_velocity.y = r.gyro.get_scaled(1);
