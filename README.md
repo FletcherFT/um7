@@ -1,5 +1,12 @@
 Forked Repository of the um7 ROS driver
 
+### Change Log
+- Fixed NED and ENU frame conventions.
+- Changed standard deviation parameters to covariance array parameters.
+
+### Known problems
+- No default vectors for covariance parameters, these have to be available from the parameter server.
+
 ros-drivers-um7
 ===============
 

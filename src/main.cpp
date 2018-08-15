@@ -331,39 +331,57 @@ int main(int argc, char **argv)
   sensor_msgs::Imu imu_msg;
   double linear_acceleration_stdev, angular_velocity_stdev;
   private_nh.param<std::string>("frame_id", imu_msg.header.frame_id, "imu_link");
-  // Defaults obtained experimentally from hardware, no device spec exists
-  private_nh.param<double>("linear_acceleration_stdev", linear_acceleration_stdev, (4.0 * 1e-3f * 9.80665));
-  private_nh.param<double>("angular_velocity_stdev", angular_velocity_stdev, (0.06 * 3.14159 / 180.0));
 
-  double linear_acceleration_cov = linear_acceleration_stdev * linear_acceleration_stdev;
-  double angular_velocity_cov = angular_velocity_stdev * angular_velocity_stdev;
-
+  // OLD STATIC VALUES
   // From the UM7 datasheet for the dynamic accuracy from the EKF.
-  double orientation_x_stdev, orientation_y_stdev, orientation_z_stdev;
-  private_nh.param<double>("orientation_x_stdev", orientation_x_stdev, (3.0 * 3.14159 / 180.0));
-  private_nh.param<double>("orientation_y_stdev", orientation_y_stdev, (3.0 * 3.14159 / 180.0));
-  private_nh.param<double>("orientation_z_stdev", orientation_z_stdev, (5.0 * 3.14159 / 180.0));
+  //double orientation_x_stdev, orientation_y_stdev, orientation_z_stdev;
+  //private_nh.param<double>("orientation_x_stdev", orientation_x_stdev, (3.0 * 3.14159 / 180.0));
+  //private_nh.param<double>("orientation_y_stdev", orientation_y_stdev, (3.0 * 3.14159 / 180.0));
+  //private_nh.param<double>("orientation_z_stdev", orientation_z_stdev, (5.0 * 3.14159 / 180.0));
+  // Defaults obtained experimentally from hardware, no device spec exists
+  //private_nh.param<double>("linear_acceleration_stdev", linear_acceleration_stdev, (4.0 * 1e-3f * 9.80665));
+  //private_nh.param<double>("angular_velocity_stdev", angular_velocity_stdev, (0.06 * 3.14159 / 180.0));
 
-  double orientation_x_covar = orientation_x_stdev * orientation_x_stdev;
-  double orientation_y_covar = orientation_y_stdev * orientation_y_stdev;
-  double orientation_z_covar = orientation_z_stdev * orientation_z_stdev;
+  // NEW METHOD OF PARSING COVARIANCE DATA
+  std::vector<double> orientation_covariance, angular_velocity_covariance, linear_acceleration_covariance;
+  private_nh.getParam("orientation_covariance", orientation_covariance);
+  private_nh.getParam("angular_velocity_covariance", angular_velocity_covariance);
+  private_nh.getParam("linear_acceleration_covariance", linear_acceleration_covariance);
 
   // Enable converting from NED to ENU by default
   bool tf_ned_to_enu;
   private_nh.param<bool>("tf_ned_to_enu", tf_ned_to_enu, true);
 
   // These values do not need to be converted
-  imu_msg.linear_acceleration_covariance[0] = linear_acceleration_cov;
-  imu_msg.linear_acceleration_covariance[4] = linear_acceleration_cov;
-  imu_msg.linear_acceleration_covariance[8] = linear_acceleration_cov;
+  imu_msg.linear_acceleration_covariance[0] = linear_acceleration_covariance[0];
+  imu_msg.linear_acceleration_covariance[1] = linear_acceleration_covariance[1];
+  imu_msg.linear_acceleration_covariance[2] = linear_acceleration_covariance[2];
+  imu_msg.linear_acceleration_covariance[3] = linear_acceleration_covariance[3];
+  imu_msg.linear_acceleration_covariance[4] = linear_acceleration_covariance[4];
+  imu_msg.linear_acceleration_covariance[5] = linear_acceleration_covariance[5];
+  imu_msg.linear_acceleration_covariance[6] = linear_acceleration_covariance[6];
+  imu_msg.linear_acceleration_covariance[7] = linear_acceleration_covariance[7];
+  imu_msg.linear_acceleration_covariance[8] = linear_acceleration_covariance[8];
 
-  imu_msg.angular_velocity_covariance[0] = angular_velocity_cov;
-  imu_msg.angular_velocity_covariance[4] = angular_velocity_cov;
-  imu_msg.angular_velocity_covariance[8] = angular_velocity_cov;
+  imu_msg.angular_velocity_covariance[0] = angular_velocity_covariance[0];
+  imu_msg.angular_velocity_covariance[1] = angular_velocity_covariance[1];
+  imu_msg.angular_velocity_covariance[2] = angular_velocity_covariance[2];
+  imu_msg.angular_velocity_covariance[3] = angular_velocity_covariance[3];
+  imu_msg.angular_velocity_covariance[4] = angular_velocity_covariance[4];
+  imu_msg.angular_velocity_covariance[5] = angular_velocity_covariance[5];
+  imu_msg.angular_velocity_covariance[6] = angular_velocity_covariance[6];
+  imu_msg.angular_velocity_covariance[7] = angular_velocity_covariance[7];
+  imu_msg.angular_velocity_covariance[8] = angular_velocity_covariance[8];
 
-  imu_msg.orientation_covariance[0] = orientation_x_covar;
-  imu_msg.orientation_covariance[4] = orientation_y_covar;
-  imu_msg.orientation_covariance[8] = orientation_z_covar;
+  imu_msg.orientation_covariance[0] = orientation_covariance[0];
+  imu_msg.orientation_covariance[1] = orientation_covariance[1];
+  imu_msg.orientation_covariance[2] = orientation_covariance[2];
+  imu_msg.orientation_covariance[3] = orientation_covariance[3];
+  imu_msg.orientation_covariance[4] = orientation_covariance[4];
+  imu_msg.orientation_covariance[5] = orientation_covariance[5];
+  imu_msg.orientation_covariance[6] = orientation_covariance[6];
+  imu_msg.orientation_covariance[7] = orientation_covariance[7];
+  imu_msg.orientation_covariance[8] = orientation_covariance[8];
 
   // Real Time Loop
   bool first_failure = true;
